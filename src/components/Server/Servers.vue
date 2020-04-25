@@ -1,12 +1,11 @@
 <template>
     <div class="col-xs-12 col-sm-6">
         <ul class="list-group">
-            <div v-for="(item, index) in serverFromApp" :key="index" :class="cssClass">
-            <li class="list-group-item">
-                Server #{{ serverFromApp[index].id }}, status: {{serverFromApp[index].status}}
-            <button @click="updtLow" :name="serverFromApp[index].id">Low</button>
-            <button @click="updtNormal" :name="serverFromApp[index].id">Normal</button>
-            <button @click="updtCritical" :name="serverFromApp[index].id">Critical</button>
+            <div v-for="(item, index) in serverFromApp" :key="index">
+            <li class="list-group-item"><span :class="item.cssClass">Server #{{ item.id }}, status: {{item.status}}</span>
+                
+            <button @click="updtLow" :name="item.id">Low</button>
+            <button @click="updtCritical" :name="item.id">Critical</button>
             </li>
 
             </div>
@@ -27,35 +26,42 @@ export default {
     data(){
         return {
 
-            cssClass:''
+            updatedResult:[],
+            isUpdated:false
             
         }
     },
     methods: {
-        updtNormal(e){
-            this.serverFromApp[e.target.attributes[1].value-1].status='Normal'
-        },
         updtCritical(e){
             this.serverFromApp[e.target.attributes[1].value-1].status='Critical'
-            e.target.parentElement.classList.add("red")
+            this.serverFromApp[e.target.attributes[1].value-1].cssClass='red'
+            this.serverFromApp[e.target.attributes[1].value-1].isChanged='true'
+            this.isUpdated=true
         },
+
         updtLow(e){
             this.serverFromApp[e.target.attributes[1].value-1].status='Low'
-            
-
+            this.serverFromApp[e.target.attributes[1].value-1].cssClass='blue'
+            this.serverFromApp[e.target.attributes[1].value-1].isChanged='true'
+            this.isUpdated=true
         },
 
         sendServersToBus(){
-            bus.$emit('sendServerToDetails', this.serverFromApp)
-            // console.log(this.serverFromApp)
+            this.updatedResult=this.serverFromApp.filter((item) => item.isChanged)
+            bus.$emit('sendServerToDetails', this.updatedResult)
         }
-    }
+    },
+
+    
 }
 </script>
 
 <style scoped>
 .red {
     color: red;
+}
+.blue {
+    color: blue;
 }
 
 
