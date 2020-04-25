@@ -3,7 +3,7 @@
         <div v-html="content"></div>
 
         <ul>
-            <li v-for="(item, index) in servers" :key="index">Server ID: {{item.id}} , Status: {{item.status}}</li>
+            <li v-for="(item, index) in servers" :key="index" v-show="ulClasse">Server ID: {{item.id}} , Status: {{item.status}}</li>
         </ul>
 
         <hr>
@@ -18,7 +18,8 @@ export default {
    data() {
        return {
            servers:[],
-           content:'<p>Server Details are currently not updated</p>'
+           content:'<p>Server Details are currently not updated</p>',
+           ulClasse: true
        }
    },
 
@@ -27,20 +28,23 @@ export default {
            this.servers=[]
            this.servers=this.servers.concat(value)
            this.content='<h3>Servers Updated</h3>'
+           this.ulClasse ? this.ulClasse : !this.ulClasse
        })
    },
    methods: {
        resetStatus(){
-           this.servers=[
-                {id:1, status: 'normal'},
-                {id:2, status: 'normal'},
-                {id:3, status: 'normal'},
-                {id:4, status: 'normal'},
-                {id:5, status: 'normal'}
-                ]
-            bus.$emit('sendStatusToBus', this.servers)
+           
+            this.content='<p>Server Details are currently not updated</p>'
+            // this.ulClasse? !this.ulClasse : this.ulClasse
+            bus.$emit('sendStatusToBus', [
+                {id:1, status: 'normal', cssClass:'', isChanged:false},
+                {id:2, status: 'normal', cssClass:'', isChanged:false},
+                {id:3, status: 'normal', cssClass:'', isChanged:false},
+                {id:4, status: 'normal', cssClass:'', isChanged:false},
+                {id:5, status: 'normal', cssClass:'', isChanged:false}
+                ])
        }
-   },
+   }
 }
 </script>
 
